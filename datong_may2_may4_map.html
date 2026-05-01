@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>北京自驾大同 5月2日-5月4日完整路书</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      --ink: #17212f;
+      --muted: #667085;
+      --line: #d8dee8;
+      --panel: #f7f9fc;
+      --blue: #2364d2;
+      --orange: #d65a1f;
+      --green: #18865a;
+      --purple: #7a3fd1;
+      --red: #c7362f;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #fff;
+    }
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(390px, 43vw) 1fr;
+      height: 100%;
+    }
+    .content {
+      overflow: auto;
+      padding: 20px 22px 36px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+    }
+    #map {
+      min-height: 100vh;
+      height: 100%;
+    }
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 22px 0 10px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+    p, li, td, th {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    p { margin: 7px 0; }
+    ul, ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+    li { margin: 5px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    tr:last-child td { border-bottom: 0; }
+    th {
+      width: 84px;
+      background: #eef3f9;
+      font-weight: 700;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 12px;
+    }
+    .version-switch {
+      position: sticky;
+      top: 0;
+      z-index: 500;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin: -20px -22px 16px;
+      padding: 12px 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 249, 252, .96);
+      backdrop-filter: blur(8px);
+    }
+    .version-switch button {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .version-switch button.active {
+      border-color: #174ea6;
+      background: #174ea6;
+      color: #fff;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      color: #24364e;
+      background: #e8eef7;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .card {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .warning {
+      border-color: #f0b2a9;
+      background: #fff4f2;
+    }
+    .tip {
+      border-color: #f3d08a;
+      background: #fff8e8;
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 10px;
+      margin-top: 8px;
+    }
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .swatch {
+      width: 24px;
+      height: 4px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .marker-label {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 9px rgba(0, 0, 0, .28);
+    }
+    .name-label {
+      padding: 3px 7px;
+      border: 1px solid rgba(36, 54, 78, .22);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .94);
+      color: #1f2a3a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .name-label.is-hidden {
+      display: none;
+    }
+    .base { background: #5f6b7a; }
+    .day1 { background: var(--blue); }
+    .day2 { background: var(--orange); }
+    .day3 { background: var(--green); }
+    .hotel { background: var(--purple); }
+    .risk { background: var(--red); }
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    a {
+      color: #155ac4;
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+    @media (max-width: 860px) {
+      .shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: 52vh auto;
+      }
+      #map {
+        min-height: 52vh;
+        order: 1;
+      }
+      .content {
+        order: 2;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+      }
+      .grid2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="content">
+      <div class="version-switch" aria-label="路线版本切换">
+        <button class="active" type="button" data-version="soil">原版：火山群 + 土林</button>
+        <button type="button" data-version="tower">木塔版：5月3日替换土林</button>
+      </div>
+      <h1>北京自驾大同 3 天完整路书</h1>
+      <div class="tags">
+        <span class="tag">2026年5月2日-5月4日</span>
+        <span class="tag">北京出发</span>
+        <span class="tag">自驾</span>
+        <span class="tag">普通预算住宿</span>
+      </div>
+
+      <div class="card warning">
+        <h3>先看这 4 个关键点</h3>
+        <ul>
+          <li>这张图的线路是“自驾通道示意”，已加张家口、宣化、天镇、云州火山群、浑源、土林等中途节点，不再是两点直飞；真正行车按高德/百度实时导航。</li>
+          <li>5月2日建议早于 7:00 出京，晚了京藏/京新、八达岭、张家口方向容易堵。</li>
+          <li>悬空寺必须优先抢票，登临票限量，且遇大风可能临时调整；土林更适合下午/傍晚拍照。</li>
+          <li>酒店必须筛“停车/免费停车/可取消”，不要只看离华严寺近。</li>
+        </ul>
+      </div>
+
+      <h2>总路线</h2>
+      <table>
+        <tr>
+          <th>去程</th>
+          <td>北京城区/北部出城 → G6京藏或G7京新 → 八达岭/延庆 → 张家口/宣化 → 天镇方向 → 云州火山群 → 大同古城。约360公里上下，正常5小时左右，五一按6小时预留。</td>
+        </tr>
+        <tr id="route-day3">
+          <th>5月3日</th>
+          <td>大同古城 → 浑源 → 悬空寺 → 北岳恒山 → 大同土林 → 大同古城。当天往返约190-220公里，土林放傍晚。</td>
+        </tr>
+        <tr>
+          <th>返程</th>
+          <td>大同古城 → 云冈石窟 → 古城补华严寺/善化寺/九龙壁 → 返京。建议15:30-16:30返程，避开夜间疲劳驾驶。</td>
+        </tr>
+      </table>
+
+      <h2>5月2日：北京到大同 + 火山群 + 古城夜景</h2>
+      <div class="card">
+        <h3>推荐节奏</h3>
+        <table>
+          <tr><th>06:30</th><td>北京出发。油加满，ETC检查好，车上备水和干粮。</td></tr>
+          <tr><th>10:30</th><td>张家口/宣化附近服务区短休，不要拖太久。</td></tr>
+          <tr><th>12:30</th><td>到大同东/云州区方向，先吃午饭，别急着进古城。</td></tr>
+          <tr><th>14:00</th><td>大同火山群国家地质公园。自驾看狼窝山/金山/昊天山一带，游玩约1.5-2小时。</td></tr>
+          <tr><th>16:30</th><td>开车进大同古城/城墙边酒店，办理入住，把车停好。</td></tr>
+          <tr><th>18:30</th><td>鼓楼、华严寺广场、九龙壁外观、古城墙夜景。第一天不建议再硬塞华严寺内部。</td></tr>
+        </table>
+      </div>
+      <div class="card tip">
+        <h3>停车策略</h3>
+        <p>先问酒店能不能保留车位。若酒店车位满，用“天下大同”小程序看古城停车场实时车位，优先九龙壁、善化寺西侧、代王府西侧、城墙周边正规停车场。停好后当天尽量步行。</p>
+      </div>
+
+      <h2 id="day3-title">5月3日：悬空寺 + 恒山 + 土林</h2>
+      <div class="card">
+        <h3>推荐节奏</h3>
+        <table id="day3-table">
+          <tr><th>06:30</th><td>大同古城出发去悬空寺，路程约75-85公里，常规1.5小时左右，五一预留2小时。</td></tr>
+          <tr><th>08:30</th><td>悬空寺。抢最早时段，先验票入园；有登临票再登临，没票就外观游览。</td></tr>
+          <tr><th>11:30</th><td>浑源县城午饭，可吃浑源凉粉、刀削面，别吃太久。</td></tr>
+          <tr><th>13:00</th><td>北岳恒山。体力一般就做核心游线；想省力就看索道/摆渡车实际开放。</td></tr>
+          <tr><th>15:30</th><td>从恒山/浑源往大同土林走，尽量别晚于16:30到土林。</td></tr>
+          <tr><th>16:30</th><td>大同土林。这里傍晚光线更好，游玩约1-1.5小时。</td></tr>
+          <tr><th>18:30</th><td>回到大同古城吃晚饭。若悬空寺/恒山耗时过长，土林就取消。</td></tr>
+        </table>
+      </div>
+      <div class="card warning">
+        <h3>当天最容易出问题</h3>
+        <ul id="day3-risk">
+          <li>悬空寺登临票售罄：照样可做外观 + 恒山，不要现场硬等。</li>
+          <li>大风/落石风险临时调整：出发前看“恒山景区”“北岳恒山景区”公众号。</li>
+          <li>停车排队：不要卡着预约时段到，至少提前30-45分钟到景区周边。</li>
+          <li>土林是锦上添花：如果当天人累、风大、下雨或路上堵，直接放弃土林，别硬赶夜路。</li>
+        </ul>
+      </div>
+
+      <h2>5月4日：云冈石窟 + 古城补漏 + 返京</h2>
+      <div class="card">
+        <h3>推荐节奏</h3>
+        <table>
+          <tr><th>07:30</th><td>退房或寄存行李，开车去云冈石窟，古城到云冈约18-22公里。</td></tr>
+          <tr><th>08:30</th><td>云冈石窟。建议第一批入园，游玩约3小时。</td></tr>
+          <tr><th>12:30</th><td>回市区午饭，取行李。</td></tr>
+          <tr><th>13:30</th><td>补古城内部：华严寺优先，其次善化寺/九龙壁。三选一到两项即可。</td></tr>
+          <tr><th>16:00</th><td>开始返京。晚于18:00再走会更累，且进京段夜间压力大。</td></tr>
+        </table>
+      </div>
+      <div class="card tip">
+        <h3>云冈预约</h3>
+        <p>云冈石窟往年五一实行线上实名预约，现场不售票，且不可预约当日票。建议提前1-7天在“云冈研究院”“云冈石窟文旅”等官方渠道预约。</p>
+      </div>
+
+      <h2 id="choice-title">土林和火山群怎么取舍</h2>
+      <div class="card">
+        <ul id="choice-list">
+          <li>火山群：放5月2日去程顺路看，适合自驾扫点，重点看狼窝山、金山、昊天山一带。它不是精致景区型体验，预期放在“地貌打卡”。</li>
+          <li>土林：放5月3日返程傍晚，光线更好，门票常见约48元，平台开放信息多为8:00-19:00、18:30停止入园。</li>
+          <li>如果只能保一个：我建议保土林。土林的观感和拍照辨识度通常比火山群更强。</li>
+        </ul>
+      </div>
+
+      <h2>住宿：两三百预算怎么选</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>A 星程酒店 清远门华严寺店</h3>
+          <p>优点：城墙边，免费停车，连锁感更稳。适合家庭自驾。</p>
+          <p>注意：五一可能超过300，先订可退。</p>
+        </div>
+        <div class="card">
+          <h3>C 汉庭 魏都大道古城南门店</h3>
+          <p>优点：经济型连锁，免费停车，价格通常更可控。</p>
+          <p>注意：离古城核心需步行/短打车，不如华严寺门口近。</p>
+        </div>
+        <div class="card">
+          <h3>D 云端小筑 华严寺店</h3>
+          <p>优点：古城内，免费停车，步行去华严寺/鼓楼方便。</p>
+          <p>注意：古城内节假日进出车可能慢。</p>
+        </div>
+        <div class="card">
+          <h3>E 梧桐格客栈 华严寺店</h3>
+          <p>优点：华严寺旁，吃饭和夜游非常方便。</p>
+          <p>注意：确认停车位和停车费；客栈类要重点看隔音评价。</p>
+        </div>
+      </div>
+      <p class="small">实操筛选：携程/美团/飞猪里设价格200-350、评分4.6+、免费取消、免费停车。五一若古城核心涨价，退到“古城南门/清远门/魏都大道/迎宾街”更现实。</p>
+
+      <h2>出发前清单</h2>
+      <div class="card">
+        <ul>
+          <li>车辆：胎压、玻璃水、机油、ETC、行驶证、驾驶证。</li>
+          <li>预约：悬空寺/恒山、云冈石窟、大同市博物馆可选。</li>
+          <li>证件：身份证必带，学生证/老人证/军人证等优惠证件带原件。</li>
+          <li>衣物：大同早晚凉，带薄外套；恒山风大，鞋要防滑。</li>
+          <li>车内：水、充电线、充电宝、少量零食、垃圾袋、常用药。</li>
+          <li id="route-save-item">路线：收藏酒店、古城停车场、悬空寺停车场、云冈停车场、火山群、土林六个导航点。</li>
+        </ul>
+      </div>
+
+      <h2>地图图例</h2>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--blue)"></i>5月2日去程/火山群</span>
+        <span><i class="swatch" style="background:var(--orange)"></i><span id="legend-day3">5月3日悬空寺/恒山/土林</span></span>
+        <span><i class="swatch" style="background:var(--green)"></i>5月4日云冈/返京</span>
+        <span><i class="swatch" style="background:var(--purple)"></i>住宿备选</span>
+      </div>
+    </section>
+    <div id="map"></div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { scrollWheelZoom: true });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+    }).addTo(map);
+
+    const points = [
+      { id: '京', name: '北京出发', pos: [39.9042, 116.4074], cls: 'base', note: '建议5月2日6:30-7:00前出发，走G6/G7方向，按实时导航避堵。' },
+      { id: '八', name: '八达岭/延庆通道', pos: [40.356, 116.014], cls: 'base', note: '出京关键拥堵段，越早通过越好。' },
+      { id: '张', name: '张家口/宣化', pos: [40.768, 114.886], cls: 'base', note: '适合服务区短休、加油、上厕所。' },
+      { id: '天', name: '天镇方向', pos: [40.423, 114.091], cls: 'base', note: '进入大同前的高速通道节点。' },
+      { id: '火', name: '大同火山群国家地质公园', pos: [40.083, 113.780], cls: 'day1', note: '5月2日去程顺路看，重点按导航找狼窝山/金山/昊天山一带。' },
+      { id: '住', name: '建议住宿区：古城/城墙边', pos: [40.090, 113.296], cls: 'base', note: '住华严寺、鼓楼、清远门、南门、魏都大道一带都可。' },
+      { id: '停', name: '古城停车参考区', pos: [40.094, 113.300], cls: 'risk', note: '用“天下大同”小程序看实时车位；当天停好后古城内步行。' },
+      { id: 'A', name: '星程酒店 清远门华严寺店', pos: [40.085, 113.286], cls: 'hotel', note: '城墙边，免费停车，预算允许时优先。' },
+      { id: 'C', name: '汉庭 魏都大道古城南门店', pos: [40.074, 113.292], cls: 'hotel', note: '经济型连锁，免费停车，价格通常更可控。' },
+      { id: 'D', name: '云端小筑 华严寺店', pos: [40.095, 113.297], cls: 'hotel', note: '古城内，免费停车，步行景点方便。' },
+      { id: 'E', name: '梧桐格客栈 华严寺店', pos: [40.090, 113.291], cls: 'hotel', note: '华严寺旁，确认停车费用和隔音。' },
+      { id: '1', name: '华严寺', pos: [40.090, 113.291], cls: 'day1', note: '5月2日下午第一站，辽金寺院建筑群。' },
+      { id: '2', name: '善化寺', pos: [40.084, 113.298], cls: 'day1', note: '5月2日下午第二站，适合慢看建筑。' },
+      { id: '3', name: '九龙壁', pos: [40.094, 113.303], cls: 'day1', note: '5月2日下午/傍晚顺路看。' },
+      { id: '4', name: '大同古城墙/和阳门', pos: [40.092, 113.315], cls: 'day1', note: '5月2日晚看夜景。' },
+      { id: '浑', name: '浑源县城', pos: [39.699, 113.691], cls: 'day2', note: '5月3日午饭点，可吃浑源凉粉。' },
+      { id: '5', name: '悬空寺', pos: [39.657, 113.705], cls: 'day2', note: '5月3日第一核心，抢早时段，登临票限量。' },
+      { id: '6', name: '北岳恒山', pos: [39.674, 113.733], cls: 'day2', note: '5月3日第二核心，按体力选择路线。' },
+      { id: '7', name: '永安寺', pos: [39.700, 113.693], cls: 'day2', note: '5月3日可选，时间紧就放弃。' },
+      { id: '土', name: '大同土林', pos: [39.893, 113.528], cls: 'day2', version: 'soil', note: '原版5月3日返程傍晚看，光线更好；若恒山耗时长就取消。' },
+      { id: '木', name: '应县木塔', pos: [39.554, 113.187], cls: 'day2', version: 'tower', note: '木塔版5月3日下午看，替换土林；恒山要轻量游。' },
+      { id: '8', name: '云冈石窟', pos: [40.110, 113.135], cls: 'day3', note: '5月4日上午第一批入园，提前预约。' },
+      { id: '9', name: '大同市博物馆', pos: [40.094, 113.354], cls: 'day3', note: '返京前有余量再去，通常需预约。' },
+      { id: '返', name: '返京高速方向', pos: [40.138, 113.438], cls: 'base', note: '建议15:00-16:00返京，按实时导航选G6/G7。' }
+    ];
+
+    function icon(p) {
+      return L.divIcon({
+        className: '',
+        html: `<div class="marker-label ${p.cls}">${p.id}</div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -16]
+      });
+    }
+
+    const markerRefs = [];
+    points.forEach(p => {
+      const marker = L.marker(p.pos, { icon: icon(p) })
+        .bindPopup(`<strong>${p.name}</strong><br>${p.note}`)
+        .bindTooltip(p.name, {
+          permanent: true,
+          direction: 'top',
+          offset: [0, -18],
+          className: 'name-label is-hidden'
+        });
+      marker.addTo(map);
+      markerRefs.push({ marker, point: p });
+    });
+
+    function updateLabels() {
+      const zoom = map.getZoom();
+      markerRefs.forEach(({ marker, point }) => {
+        const el = marker.getTooltip() && marker.getTooltip().getElement();
+        if (!el) return;
+        const major = ['京', '张', '住', '火', '5', '6', '土', '木', '8'].includes(point.id);
+        const show = zoom >= 9 || (zoom >= 8 && major);
+        el.classList.toggle('is-hidden', !show);
+      });
+    }
+    map.on('zoomend moveend', updateLabels);
+
+    const outbound = [
+      [39.9042,116.4074],
+      [40.060,116.350],
+      [40.220,116.120],
+      [40.356,116.014],
+      [40.430,115.520],
+      [40.608,115.044],
+      [40.768,114.886],
+      [40.674,114.422],
+      [40.423,114.091],
+      [40.190,113.650],
+      [40.083,113.780],
+      [40.120,113.540],
+      [40.090,113.296]
+    ];
+    const oldTownWalk = [
+      [40.090,113.296],
+      [40.090,113.291],
+      [40.084,113.298],
+      [40.094,113.303],
+      [40.092,113.315],
+      [40.090,113.296]
+    ];
+    const hunyuan = [
+      [40.090,113.296],
+      [39.950,113.410],
+      [39.780,113.560],
+      [39.699,113.691],
+      [39.657,113.705],
+      [39.674,113.733],
+      [39.699,113.691],
+      [39.893,113.528],
+      [39.780,113.560],
+      [40.090,113.296]
+    ];
+    const hunyuanTower = [
+      [40.090,113.296],
+      [39.950,113.410],
+      [39.780,113.560],
+      [39.699,113.691],
+      [39.657,113.705],
+      [39.674,113.733],
+      [39.630,113.540],
+      [39.554,113.187],
+      [39.760,113.260],
+      [40.090,113.296]
+    ];
+    const yungangReturn = [
+      [40.090,113.296],
+      [40.110,113.135],
+      [40.138,113.438],
+      [40.190,113.650],
+      [40.423,114.091],
+      [40.768,114.886],
+      [40.356,116.014],
+      [39.9042,116.4074]
+    ];
+
+    const outboundLine = L.polyline(outbound, { color: '#2364d2', weight: 5, opacity: .85 }).addTo(map).bindPopup('5月2日：北京到大同，顺路看火山群');
+    const oldTownLine = L.polyline(oldTownWalk, { color: '#2364d2', weight: 3, opacity: .65, dashArray: '7 7' }).addTo(map).bindPopup('古城内步行线');
+    const soilLine = L.polyline(hunyuan, { color: '#d65a1f', weight: 5, opacity: .85 }).addTo(map).bindPopup('原版5月3日：悬空寺-恒山-土林线');
+    const towerLine = L.polyline(hunyuanTower, { color: '#d65a1f', weight: 5, opacity: .85, dashArray: '10 6' }).bindPopup('木塔版5月3日：悬空寺-恒山轻量游-应县木塔线');
+    const returnLine = L.polyline(yungangReturn, { color: '#18865a', weight: 5, opacity: .85 }).addTo(map).bindPopup('5月4日：云冈石窟-返京线');
+
+    const copy = {
+      soil: {
+        routeDay3: '大同古城 → 浑源 → 悬空寺 → 北岳恒山 → 大同土林 → 大同古城。当天往返约190-220公里，土林放傍晚。',
+        day3Title: '5月3日：悬空寺 + 恒山 + 土林',
+        day3Rows: [
+          ['06:30', '大同古城出发去悬空寺，路程约75-85公里，常规1.5小时左右，五一预留2小时。'],
+          ['08:30', '悬空寺。抢最早时段，先验票入园；有登临票再登临，没票就外观游览。'],
+          ['11:30', '浑源县城午饭，可吃浑源凉粉、刀削面，别吃太久。'],
+          ['13:00', '北岳恒山。体力一般就做核心游线；想省力就看索道/摆渡车实际开放。'],
+          ['15:30', '从恒山/浑源往大同土林走，尽量别晚于16:30到土林。'],
+          ['16:30', '大同土林。这里傍晚光线更好，游玩约1-1.5小时。'],
+          ['18:30', '回到大同古城吃晚饭。若悬空寺/恒山耗时过长，土林就取消。']
+        ],
+        risks: [
+          '悬空寺登临票售罄：照样可做外观 + 恒山，不要现场硬等。',
+          '大风/落石风险临时调整：出发前看“恒山景区”“北岳恒山景区”公众号。',
+          '停车排队：不要卡着预约时段到，至少提前30-45分钟到景区周边。',
+          '土林是锦上添花：如果当天人累、风大、下雨或路上堵，直接放弃土林，别硬赶夜路。'
+        ],
+        choiceTitle: '土林和火山群怎么取舍',
+        choices: [
+          '火山群：放5月2日去程顺路看，适合自驾扫点，重点看狼窝山、金山、昊天山一带。它不是精致景区型体验，预期放在“地貌打卡”。',
+          '土林：放5月3日返程傍晚，光线更好，门票常见约48元，平台开放信息多为8:00-19:00、18:30停止入园。',
+          '如果只能保一个：我建议保土林。土林的观感和拍照辨识度通常比火山群更强。'
+        ],
+        routeSave: '路线：收藏酒店、古城停车场、悬空寺停车场、云冈停车场、火山群、土林六个导航点。',
+        legend: '5月3日悬空寺/恒山/土林'
+      },
+      tower: {
+        routeDay3: '大同古城 → 浑源 → 悬空寺 → 北岳恒山轻量游 → 应县木塔 → 大同古城。当天往返约220-250公里，木塔替换土林。',
+        day3Title: '5月3日：悬空寺 + 恒山轻量游 + 应县木塔',
+        day3Rows: [
+          ['06:15', '大同古城出发去悬空寺，比原版再提前15分钟，五一不要踩点。'],
+          ['08:15', '悬空寺。优先完成登临/外观游览，现场排队过长就压缩后面的恒山。'],
+          ['10:30', '北岳恒山轻量游。只做核心段或索道/摆渡车组合，不建议完整爬山。'],
+          ['12:30', '浑源或应县方向午饭，边吃边看应县木塔入园时间和路况。'],
+          ['14:00', '应县木塔。游玩约1-1.5小时，重点看木塔外观、辽代古建结构和周边院落。'],
+          ['15:45', '从应县返大同古城，五一按1.5-2小时预留。'],
+          ['18:00', '回大同古城吃晚饭。木塔版默认取消土林和永安寺。']
+        ],
+        risks: [
+          '木塔版默认替换土林：不要再把土林塞回当天，否则大概率赶路。',
+          '恒山只能轻量游：如果想完整爬恒山，就不要加木塔。',
+          '悬空寺严重排队时，现场二选一：保木塔就压缩恒山；保恒山就取消木塔。',
+          '应县木塔下午入园时间以当天购票平台为准，出发前再看一次停止入园时间。'
+        ],
+        choiceTitle: '木塔版取舍说明',
+        choices: [
+          '应县木塔：替换5月3日土林，优先级更偏历史古建，适合想看“真正代表性景点”的版本。',
+          '土林：旧版保留，适合拍地貌和傍晚光线；但和木塔同天都去会太赶。',
+          '木塔版最稳打法：悬空寺优先，恒山轻量游，应县木塔下午看，永安寺和土林都取消。'
+        ],
+        routeSave: '路线：收藏酒店、古城停车场、悬空寺停车场、应县木塔停车场、云冈停车场、火山群六个导航点。',
+        legend: '5月3日悬空寺/恒山/应县木塔'
+      }
+    };
+
+    function renderRows(rows) {
+      return rows.map(([time, text]) => `<tr><th>${time}</th><td>${text}</td></tr>`).join('');
+    }
+
+    function renderList(items) {
+      return items.map(text => `<li>${text}</li>`).join('');
+    }
+
+    function applyVersion(version) {
+      const data = copy[version];
+      document.querySelectorAll('[data-version]').forEach(button => {
+        button.classList.toggle('active', button.dataset.version === version);
+      });
+      document.querySelector('#route-day3 td').textContent = data.routeDay3;
+      document.querySelector('#day3-title').textContent = data.day3Title;
+      document.querySelector('#day3-table').innerHTML = renderRows(data.day3Rows);
+      document.querySelector('#day3-risk').innerHTML = renderList(data.risks);
+      document.querySelector('#choice-title').textContent = data.choiceTitle;
+      document.querySelector('#choice-list').innerHTML = renderList(data.choices);
+      document.querySelector('#route-save-item').textContent = data.routeSave;
+      document.querySelector('#legend-day3').textContent = data.legend;
+
+      if (version === 'tower') {
+        if (map.hasLayer(soilLine)) map.removeLayer(soilLine);
+        if (!map.hasLayer(towerLine)) towerLine.addTo(map);
+      } else {
+        if (map.hasLayer(towerLine)) map.removeLayer(towerLine);
+        if (!map.hasLayer(soilLine)) soilLine.addTo(map);
+      }
+
+      markerRefs.forEach(({ marker, point }) => {
+        const shouldShow = !point.version || point.version === version;
+        if (shouldShow && !map.hasLayer(marker)) marker.addTo(map);
+        if (!shouldShow && map.hasLayer(marker)) map.removeLayer(marker);
+      });
+      updateLabels();
+    }
+
+    document.querySelectorAll('[data-version]').forEach(button => {
+      button.addEventListener('click', () => applyVersion(button.dataset.version));
+    });
+
+    map.fitBounds(L.latLngBounds(points.map(p => p.pos)).pad(0.08));
+    applyVersion('soil');
+    setTimeout(updateLabels, 0);
+  </script>
+</body>
+</html>
