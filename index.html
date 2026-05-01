@@ -96,16 +96,23 @@
       position: sticky;
       top: 0;
       z-index: 500;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin: -20px -22px 16px;
       padding: 12px 22px;
       border-bottom: 1px solid var(--line);
       background: rgba(247, 249, 252, .96);
       backdrop-filter: blur(8px);
     }
-    .version-switch button {
+    .version-switch label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #24364e;
+      white-space: nowrap;
+    }
+    .version-switch select {
+      width: 100%;
       min-height: 36px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -115,11 +122,7 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-    }
-    .version-switch button.active {
-      border-color: #174ea6;
-      background: #174ea6;
-      color: #fff;
+      padding: 0 10px;
     }
     .tag {
       display: inline-flex;
@@ -203,6 +206,7 @@
     .day3 { background: var(--green); }
     .hotel { background: var(--purple); }
     .risk { background: var(--red); }
+    .food { background: #9a6b00; }
     .small {
       font-size: 12px;
       color: var(--muted);
@@ -234,8 +238,12 @@
   <main class="shell">
     <section class="content">
       <div class="version-switch" aria-label="路线版本切换">
-        <button class="active" type="button" data-version="soil">原版：火山群 + 土林</button>
-        <button type="button" data-version="tower">木塔版：5月3日替换土林</button>
+        <label for="version-select">路线版本</label>
+        <select id="version-select">
+          <option value="v1">v1 原版：火山群 + 土林</option>
+          <option value="v2">v2 木塔版：5月3日替换土林</option>
+          <option value="v3" selected>v3 住宿版：吾悦广场 + 木塔 + 餐厅</option>
+        </select>
       </div>
       <h1>北京自驾大同 3 天完整路书</h1>
       <div class="tags">
@@ -250,14 +258,14 @@
         <ul>
           <li>这张图的线路是“自驾通道示意”，已加张家口、宣化、天镇、云州火山群、浑源、土林等中途节点，不再是两点直飞；真正行车按高德/百度实时导航。</li>
           <li>5月2日建议早于 7:00 出京，晚了京藏/京新、八达岭、张家口方向容易堵。</li>
-          <li>悬空寺必须优先抢票，登临票限量，且遇大风可能临时调整；土林更适合下午/傍晚拍照。</li>
+          <li>悬空寺必须优先抢票，登临票限量，且遇大风可能临时调整；木塔版/住宿版默认用应县木塔替换土林。</li>
           <li>酒店必须筛“停车/免费停车/可取消”，不要只看离华严寺近。</li>
         </ul>
       </div>
 
       <h2>总路线</h2>
       <table>
-        <tr>
+        <tr id="route-outbound">
           <th>去程</th>
           <td>北京城区/北部出城 → G6京藏或G7京新 → 八达岭/延庆 → 张家口/宣化 → 天镇方向 → 云州火山群 → 大同古城。约360公里上下，正常5小时左右，五一按6小时预留。</td>
         </tr>
@@ -265,16 +273,16 @@
           <th>5月3日</th>
           <td>大同古城 → 浑源 → 悬空寺 → 北岳恒山 → 大同土林 → 大同古城。当天往返约190-220公里，土林放傍晚。</td>
         </tr>
-        <tr>
+        <tr id="route-return">
           <th>返程</th>
           <td>大同古城 → 云冈石窟 → 古城补华严寺/善化寺/九龙壁 → 返京。建议15:30-16:30返程，避开夜间疲劳驾驶。</td>
         </tr>
       </table>
 
-      <h2>5月2日：北京到大同 + 火山群 + 古城夜景</h2>
+      <h2 id="day2-title">5月2日：北京到大同 + 火山群 + 古城夜景</h2>
       <div class="card">
         <h3>推荐节奏</h3>
-        <table>
+        <table id="day2-table">
           <tr><th>06:30</th><td>北京出发。油加满，ETC检查好，车上备水和干粮。</td></tr>
           <tr><th>10:30</th><td>张家口/宣化附近服务区短休，不要拖太久。</td></tr>
           <tr><th>12:30</th><td>到大同东/云州区方向，先吃午饭，别急着进古城。</td></tr>
@@ -285,7 +293,7 @@
       </div>
       <div class="card tip">
         <h3>停车策略</h3>
-        <p>先问酒店能不能保留车位。若酒店车位满，用“天下大同”小程序看古城停车场实时车位，优先九龙壁、善化寺西侧、代王府西侧、城墙周边正规停车场。停好后当天尽量步行。</p>
+        <p id="parking-note">先问酒店能不能保留车位。若酒店车位满，用“天下大同”小程序看古城停车场实时车位，优先九龙壁、善化寺西侧、代王府西侧、城墙周边正规停车场。停好后当天尽量步行。</p>
       </div>
 
       <h2 id="day3-title">5月3日：悬空寺 + 恒山 + 土林</h2>
@@ -311,10 +319,10 @@
         </ul>
       </div>
 
-      <h2>5月4日：云冈石窟 + 古城补漏 + 返京</h2>
+      <h2 id="day4-title">5月4日：云冈石窟 + 古城补漏 + 返京</h2>
       <div class="card">
         <h3>推荐节奏</h3>
-        <table>
+        <table id="day4-table">
           <tr><th>07:30</th><td>退房或寄存行李，开车去云冈石窟，古城到云冈约18-22公里。</td></tr>
           <tr><th>08:30</th><td>云冈石窟。建议第一批入园，游玩约3小时。</td></tr>
           <tr><th>12:30</th><td>回市区午饭，取行李。</td></tr>
@@ -361,6 +369,26 @@
       </div>
       <p class="small">实操筛选：携程/美团/飞猪里设价格200-350、评分4.6+、免费取消、免费停车。五一若古城核心涨价，退到“古城南门/清远门/魏都大道/迎宾街”更现实。</p>
 
+      <h2>餐厅安排</h2>
+      <div class="card">
+        <ul>
+          <li>5月2日晚：古城夜游时优先看龙聚祥烧麦馆鼓楼店、紫泥369鼓楼店；排队太久就去花园大饭店餐厅。</li>
+          <li>5月3日晚：从悬空寺/恒山/应县木塔回来会累，优先凯鸽酒楼或三道菜，吃稳妥炒菜。</li>
+          <li>5月4日午饭：云冈后进古城，吃喜晋道刀削面或豆面刘姥姥；时间紧就东方削面。</li>
+          <li>地图里的棕色点是餐厅，点击能看到电话、适合哪顿和排队/停车注意事项。</li>
+        </ul>
+      </div>
+
+      <h2>5月3日午饭简案</h2>
+      <div class="card">
+        <ul>
+          <li>首选：浑源县城吃正餐，优先蔡家酒楼或鸿福酒楼，点过油肉、黄花菜、恒山菇、莜面/刀削面。吃完再去应县木塔。</li>
+          <li>赶时间：浑源小媳妇凉粉只做快餐，凉粉+馅饼+熏蛋/豆干，30分钟内解决。</li>
+          <li>到应县再吃：按你给的美团链接，优先顺丰削面·山西菜；想换口味可看醉川西火盆烧烤、张蔚巧大嫂烤骨头、福来山庄。</li>
+          <li>五一原则：不要为吃饭排超过30分钟；先保悬空寺、恒山轻量游和应县木塔。</li>
+        </ul>
+      </div>
+
       <h2>出发前清单</h2>
       <div class="card">
         <ul>
@@ -379,6 +407,7 @@
         <span><i class="swatch" style="background:var(--orange)"></i><span id="legend-day3">5月3日悬空寺/恒山/土林</span></span>
         <span><i class="swatch" style="background:var(--green)"></i>5月4日云冈/返京</span>
         <span><i class="swatch" style="background:var(--purple)"></i>住宿备选</span>
+        <span><i class="swatch" style="background:#9a6b00"></i>餐厅：点击看电话和注意事项</span>
       </div>
     </section>
     <div id="map"></div>
@@ -398,12 +427,13 @@
       { id: '张', name: '张家口/宣化', pos: [40.768, 114.886], cls: 'base', note: '适合服务区短休、加油、上厕所。' },
       { id: '天', name: '天镇方向', pos: [40.423, 114.091], cls: 'base', note: '进入大同前的高速通道节点。' },
       { id: '火', name: '大同火山群国家地质公园', pos: [40.083, 113.780], cls: 'day1', note: '5月2日去程顺路看，重点按导航找狼窝山/金山/昊天山一带。' },
-      { id: '住', name: '建议住宿区：古城/城墙边', pos: [40.090, 113.296], cls: 'base', note: '住华严寺、鼓楼、清远门、南门、魏都大道一带都可。' },
+      { id: '住', name: '建议住宿区：古城/城墙边', pos: [40.090, 113.296], cls: 'base', versions: ['v1', 'v2'], note: '住华严寺、鼓楼、清远门、南门、魏都大道一带都可。' },
+      { id: '宿', name: '实际住宿：吾悦广场/植物园附近', pos: [40.015, 113.155], cls: 'hotel', version: 'v3', note: '按大同云冈吾悦广场/南环西路与平德路附近估算。出发前用民宿完整地址替换导航点。' },
       { id: '停', name: '古城停车参考区', pos: [40.094, 113.300], cls: 'risk', note: '用“天下大同”小程序看实时车位；当天停好后古城内步行。' },
-      { id: 'A', name: '星程酒店 清远门华严寺店', pos: [40.085, 113.286], cls: 'hotel', note: '城墙边，免费停车，预算允许时优先。' },
-      { id: 'C', name: '汉庭 魏都大道古城南门店', pos: [40.074, 113.292], cls: 'hotel', note: '经济型连锁，免费停车，价格通常更可控。' },
-      { id: 'D', name: '云端小筑 华严寺店', pos: [40.095, 113.297], cls: 'hotel', note: '古城内，免费停车，步行景点方便。' },
-      { id: 'E', name: '梧桐格客栈 华严寺店', pos: [40.090, 113.291], cls: 'hotel', note: '华严寺旁，确认停车费用和隔音。' },
+      { id: 'A', name: '星程酒店 清远门华严寺店', pos: [40.085, 113.286], cls: 'hotel', versions: ['v1', 'v2'], note: '城墙边，免费停车，预算允许时优先。' },
+      { id: 'C', name: '汉庭 魏都大道古城南门店', pos: [40.074, 113.292], cls: 'hotel', versions: ['v1', 'v2'], note: '经济型连锁，免费停车，价格通常更可控。' },
+      { id: 'D', name: '云端小筑 华严寺店', pos: [40.095, 113.297], cls: 'hotel', versions: ['v1', 'v2'], note: '古城内，免费停车，步行景点方便。' },
+      { id: 'E', name: '梧桐格客栈 华严寺店', pos: [40.090, 113.291], cls: 'hotel', versions: ['v1', 'v2'], note: '华严寺旁，确认停车费用和隔音。' },
       { id: '1', name: '华严寺', pos: [40.090, 113.291], cls: 'day1', note: '5月2日下午第一站，辽金寺院建筑群。' },
       { id: '2', name: '善化寺', pos: [40.084, 113.298], cls: 'day1', note: '5月2日下午第二站，适合慢看建筑。' },
       { id: '3', name: '九龙壁', pos: [40.094, 113.303], cls: 'day1', note: '5月2日下午/傍晚顺路看。' },
@@ -412,11 +442,28 @@
       { id: '5', name: '悬空寺', pos: [39.657, 113.705], cls: 'day2', note: '5月3日第一核心，抢早时段，登临票限量。' },
       { id: '6', name: '北岳恒山', pos: [39.674, 113.733], cls: 'day2', note: '5月3日第二核心，按体力选择路线。' },
       { id: '7', name: '永安寺', pos: [39.700, 113.693], cls: 'day2', note: '5月3日可选，时间紧就放弃。' },
-      { id: '土', name: '大同土林', pos: [39.893, 113.528], cls: 'day2', version: 'soil', note: '原版5月3日返程傍晚看，光线更好；若恒山耗时长就取消。' },
-      { id: '木', name: '应县木塔', pos: [39.554, 113.187], cls: 'day2', version: 'tower', note: '木塔版5月3日下午看，替换土林；恒山要轻量游。' },
+      { id: '土', name: '大同土林', pos: [39.893, 113.528], cls: 'day2', version: 'v1', note: 'v1 5月3日返程傍晚看，光线更好；若恒山耗时长就取消。' },
+      { id: '木', name: '应县木塔', pos: [39.554, 113.187], cls: 'day2', versions: ['v2', 'v3'], note: 'v2/v3 5月3日下午看，替换土林；恒山要轻量游。' },
       { id: '8', name: '云冈石窟', pos: [40.110, 113.135], cls: 'day3', note: '5月4日上午第一批入园，提前预约。' },
       { id: '9', name: '大同市博物馆', pos: [40.094, 113.354], cls: 'day3', note: '返京前有余量再去，通常需预约。' },
-      { id: '返', name: '返京高速方向', pos: [40.138, 113.438], cls: 'base', note: '建议15:00-16:00返京，按实时导航选G6/G7。' }
+      { id: '返', name: '返京高速方向', pos: [40.138, 113.438], cls: 'base', note: '建议15:00-16:00返京，按实时导航选G6/G7。' },
+      { id: '食1', name: '龍聚祥烧麦馆 鼓楼店', pos: [40.092, 113.301], cls: 'food', note: '电话：0352-5378899<br>地址：平城区鼓楼西街与永泰街交叉口西北角。<br>适合：5月2日晚，烧麦/晋菜。<br>注意：五一排队可能长，先拿号；古城停车紧，建议从吾悦住宿打车进城。<br><a href="http://dpurl.cn/aKvjlzUz" target="_blank">美团链接</a>' },
+      { id: '食2', name: '紫泥369粗粮季 四牌楼店', pos: [40.092, 113.300], cls: 'food', note: '电话：0352-5880888 / 0352-5881888<br>地址：平城区四牌楼西北角。<br>适合：5月2日晚，粗粮/晋北菜。<br>注意：适合多人点菜，饭点排队时和龙聚祥二选一。<br><a href="http://dpurl.cn/ziz1pS5z" target="_blank">美团链接</a>' },
+      { id: '食3', name: '花园大饭店中餐厅', pos: [40.083, 113.309], cls: 'food', note: '电话：0352-5865848 / 5865866<br>地址：平城区永泰街59号花园大饭店内近鼓楼。<br>适合：5月2日晚排队崩溃时的稳妥备选。<br>注意：酒店餐厅更稳，但出发前最好电话确认营业和排位。<br><a href="http://dpurl.cn/pfP5Onhz" target="_blank">美团链接</a>' },
+      { id: '食4', name: '凯鸽酒楼 操场城店', pos: [40.105, 113.293], cls: 'food', note: '电话：0352-6020099 / 0352-6020033<br>地址：平城区操场城西街22号。<br>适合：5月3日晚，悬空寺/木塔回来后吃稳妥炒菜。<br>注意：建议提前电话排位；自驾停车比古城核心略友好。<br><a href="http://dpurl.cn/UScUP4Sz" target="_blank">美团链接</a>' },
+      { id: '食5', name: '三道菜 晨馨花园店', pos: [40.074, 113.259], cls: 'food', note: '电话：0352-2094666<br>地址：平城区西环路晨馨花园沿街商铺。<br>适合：5月3日晚备选，炒菜。<br>注意：相对更靠西，可能比明堂公园店更顺你们吾悦住宿方向。<br><a href="http://dpurl.cn/JkYeYrIz" target="_blank">美团链接</a>' },
+      { id: '食6', name: '喜晋道面馆 华严寺广场店', pos: [40.090, 113.294], cls: 'food', note: '电话：0352-5328999<br>地址：平城区清远街古城B区1号商铺（钟楼南侧）。<br>适合：5月4日午饭，刀削面。<br>注意：云冈后进古城补景点时顺路；饭点排队就改东方削面。<br><a href="http://dpurl.cn/1n8msSrz" target="_blank">美团链接</a>' },
+      { id: '食7', name: '晋北刘姥姥豆面老号 古城店', pos: [40.092, 113.300], cls: 'food', note: '电话：13403628939<br>地址：平城区古城四牌楼。<br>适合：5月4日午饭/轻食，豆面。<br>注意：适合想吃本地小吃，不适合当很正式的大餐。<br><a href="http://dpurl.cn/XizutMUz" target="_blank">美团链接</a>' },
+      { id: '食8', name: '顺意凉粉 鼓楼东街总店', pos: [40.095, 113.304], cls: 'food', note: '电话：18734645572<br>地址：平城区鼓楼东街15号。<br>适合：古城顺手小吃，不建议当正餐。<br>注意：凉粉类整体差异不会特别大，顺路吃即可。<br><a href="http://dpurl.cn/brEfNKaz" target="_blank">美团链接</a>' },
+      { id: '食9', name: '东方削面 迎泽街店', pos: [40.084, 113.306], cls: 'food', note: '电话：13546058965<br>地址：平城区振华街道云中路建设里小区西区西侧（金豆米粥旁）。<br>适合：5月4日时间紧时快速吃刀削面。<br>注意：效率型选择，别把它当精致餐厅。<br><a href="http://dpurl.cn/9NprXEez" target="_blank">美团链接</a>' },
+      { id: '浑饭1', name: '蔡家酒楼 一德街店', pos: [39.704, 113.694], cls: 'food', version: 'v3', note: '电话：0352-8333369 / 15034229626<br>地址：浑源县恒山南路浑源一德街A区065号。<br>适合：5月3日浑源午饭正餐。<br>推荐：过油肉、土豆拌莜面、酸汤羊肉、刀削面。<br>注意：五一饭点先电话确认排队。<br><a href="http://dpurl.cn/TPQoNKrz" target="_blank">美团链接</a>' },
+      { id: '浑饭2', name: '鸿福酒楼 恒山南路山门店', pos: [39.707, 113.695], cls: 'food', version: 'v3', note: '电话：0352-8335988 / 0352-8331999<br>地址：浑源县恒山南路56号（岳麓家园对面）。<br>适合：5月3日浑源午饭正餐。<br>推荐：过油肉、恒山菇、炝拌鲜黄花菜、私房辣炒羊拐筋。<br>注意：位置在恒山南路，适合从恒山下来吃。<br><a href="http://dpurl.cn/pIy6044z" target="_blank">美团链接</a>' },
+      { id: '浑快', name: '小媳妇凉粉 浑源店', pos: [39.700, 113.685], cls: 'food', version: 'v3', note: '电话：13835247841<br>地址：浑源县永安镇永安西街9号（商业职工医院旁）。<br>适合：5月3日赶时间快餐/加餐，不作为唯一正餐也可以。<br>推荐：凉粉、馅饼、熏蛋、豆干、蚕豆。<br>注意：热门店，五一排队长就放弃。<br><a href="http://dpurl.cn/LY0byKOz" target="_blank">美团链接</a>' },
+      { id: '浑快2', name: '小芹凉粉豆面粉', pos: [39.700, 113.684], cls: 'food', version: 'v3', note: '电话：13513526557<br>地址：浑源县永安镇永安西街91号商铺。<br>适合：5月3日浑源快餐/加餐，凉粉豆面粉。<br>注意：作为小媳妇凉粉排队过长时的替代。<br><a href="http://dpurl.cn/hyfI1sgz" target="_blank">美团链接</a>' },
+      { id: '应饭1', name: '顺丰削面·山西菜 五小店', pos: [39.548, 113.196], cls: 'food', version: 'v3', note: '电话：15603493789 / 13008041666<br>地址：应县劳动和社会保障局南行50米路东。<br>适合：应县正餐首选，刀削面/山西菜。<br>注意：你给了两个美团链接，保留其中一个；五一先看排队和停车。<br><a href="http://dpurl.cn/Wybw6haz" target="_blank">美团链接</a>' },
+      { id: '应饭2', name: '醉川西火盆烧烤 新建南路店', pos: [39.548, 113.188], cls: 'food', version: 'v3', note: '电话：13834999936<br>地址：应县新建南路美栖酒店二部对面。<br>适合：到应县想换烧烤口味。<br>注意：烧烤可能慢，不适合赶木塔入园时间。<br><a href="http://dpurl.cn/9f51MePz" target="_blank">美团链接</a>' },
+      { id: '应饭3', name: '张蔚巧大嫂烤骨头', pos: [39.546, 113.183], cls: 'food', version: 'v3', note: '电话：15932327030 / 18734991608<br>地址：应县金城镇大同南路与广和西街交叉口东南角（近应县七小）。<br>适合：应县正餐/肉食备选。<br>注意：离木塔稍远，适合不赶时间时去。<br><a href="http://dpurl.cn/rDnxnKAz" target="_blank">美团链接</a>' },
+      { id: '应饭4', name: '福来山庄 畅和园店', pos: [39.552, 113.177], cls: 'food', version: 'v3', note: '电话：13934986671<br>地址：应县新建西路和谐小区临街商铺3号。<br>适合：应县正餐备选。<br>注意：不在木塔门口，适合现场觉得木塔周边太挤时外撤。<br><a href="http://dpurl.cn/qCC0tc7z" target="_blank">美团链接</a>' }
     ];
 
     function icon(p) {
@@ -448,7 +495,7 @@
       markerRefs.forEach(({ marker, point }) => {
         const el = marker.getTooltip() && marker.getTooltip().getElement();
         if (!el) return;
-        const major = ['京', '张', '住', '火', '5', '6', '土', '木', '8'].includes(point.id);
+        const major = ['京', '张', '住', '宿', '火', '5', '6', '土', '木', '8', '食1', '食4', '食6'].includes(point.id);
         const show = zoom >= 9 || (zoom >= 8 && major);
         el.classList.toggle('is-hidden', !show);
       });
@@ -469,6 +516,18 @@
       [40.083,113.780],
       [40.120,113.540],
       [40.090,113.296]
+    ];
+    const outboundV3 = [
+      [39.9042,116.4074],
+      [40.060,116.350],
+      [40.356,116.014],
+      [40.768,114.886],
+      [40.423,114.091],
+      [40.190,113.650],
+      [40.083,113.780],
+      [40.015,113.155],
+      [40.090,113.296],
+      [40.015,113.155]
     ];
     const oldTownWalk = [
       [40.090,113.296],
@@ -502,6 +561,19 @@
       [39.760,113.260],
       [40.090,113.296]
     ];
+    const hunyuanTowerV3 = [
+      [40.015,113.155],
+      [40.090,113.296],
+      [39.950,113.410],
+      [39.780,113.560],
+      [39.699,113.691],
+      [39.657,113.705],
+      [39.674,113.733],
+      [39.630,113.540],
+      [39.554,113.187],
+      [39.760,113.260],
+      [40.015,113.155]
+    ];
     const yungangReturn = [
       [40.090,113.296],
       [40.110,113.135],
@@ -512,16 +584,41 @@
       [40.356,116.014],
       [39.9042,116.4074]
     ];
+    const yungangReturnV3 = [
+      [40.015,113.155],
+      [40.110,113.135],
+      [40.090,113.296],
+      [40.138,113.438],
+      [40.423,114.091],
+      [40.768,114.886],
+      [40.356,116.014],
+      [39.9042,116.4074]
+    ];
 
     const outboundLine = L.polyline(outbound, { color: '#2364d2', weight: 5, opacity: .85 }).addTo(map).bindPopup('5月2日：北京到大同，顺路看火山群');
+    const outboundV3Line = L.polyline(outboundV3, { color: '#2364d2', weight: 5, opacity: .85, dashArray: '10 6' }).bindPopup('v3 5月2日：北京-火山群-吾悦住宿-古城夜游');
     const oldTownLine = L.polyline(oldTownWalk, { color: '#2364d2', weight: 3, opacity: .65, dashArray: '7 7' }).addTo(map).bindPopup('古城内步行线');
     const soilLine = L.polyline(hunyuan, { color: '#d65a1f', weight: 5, opacity: .85 }).addTo(map).bindPopup('原版5月3日：悬空寺-恒山-土林线');
     const towerLine = L.polyline(hunyuanTower, { color: '#d65a1f', weight: 5, opacity: .85, dashArray: '10 6' }).bindPopup('木塔版5月3日：悬空寺-恒山轻量游-应县木塔线');
+    const towerV3Line = L.polyline(hunyuanTowerV3, { color: '#d65a1f', weight: 5, opacity: .85, dashArray: '10 6' }).bindPopup('v3 5月3日：住宿-悬空寺-恒山轻量游-应县木塔-住宿');
     const returnLine = L.polyline(yungangReturn, { color: '#18865a', weight: 5, opacity: .85 }).addTo(map).bindPopup('5月4日：云冈石窟-返京线');
+    const returnV3Line = L.polyline(yungangReturnV3, { color: '#18865a', weight: 5, opacity: .85, dashArray: '10 6' }).bindPopup('v3 5月4日：住宿-云冈-古城补漏-返京');
 
     const copy = {
-      soil: {
+      v1: {
+        routeOutbound: '北京城区/北部出城 → G6京藏或G7京新 → 八达岭/延庆 → 张家口/宣化 → 天镇方向 → 云州火山群 → 大同古城。约360公里上下，正常5小时左右，五一按6小时预留。',
         routeDay3: '大同古城 → 浑源 → 悬空寺 → 北岳恒山 → 大同土林 → 大同古城。当天往返约190-220公里，土林放傍晚。',
+        routeReturn: '大同古城 → 云冈石窟 → 古城补华严寺/善化寺/九龙壁 → 返京。建议15:30-16:30返程，避开夜间疲劳驾驶。',
+        day2Title: '5月2日：北京到大同 + 火山群 + 古城夜景',
+        day2Rows: [
+          ['06:30', '北京出发。油加满，ETC检查好，车上备水和干粮。'],
+          ['10:30', '张家口/宣化附近服务区短休，不要拖太久。'],
+          ['12:30', '到大同东/云州区方向，先吃午饭，别急着进古城。'],
+          ['14:00', '大同火山群国家地质公园。自驾看狼窝山/金山/昊天山一带，游玩约1.5-2小时。'],
+          ['16:30', '开车进大同古城/城墙边酒店，办理入住，把车停好。'],
+          ['18:30', '鼓楼、华严寺广场、九龙壁外观、古城墙夜景。第一天不建议再硬塞华严寺内部。']
+        ],
+        parking: '先问酒店能不能保留车位。若酒店车位满，用“天下大同”小程序看古城停车场实时车位，优先九龙壁、善化寺西侧、代王府西侧、城墙周边正规停车场。停好后当天尽量步行。',
         day3Title: '5月3日：悬空寺 + 恒山 + 土林',
         day3Rows: [
           ['06:30', '大同古城出发去悬空寺，路程约75-85公里，常规1.5小时左右，五一预留2小时。'],
@@ -538,6 +635,14 @@
           '停车排队：不要卡着预约时段到，至少提前30-45分钟到景区周边。',
           '土林是锦上添花：如果当天人累、风大、下雨或路上堵，直接放弃土林，别硬赶夜路。'
         ],
+        day4Title: '5月4日：云冈石窟 + 古城补漏 + 返京',
+        day4Rows: [
+          ['07:30', '退房或寄存行李，开车去云冈石窟，古城到云冈约18-22公里。'],
+          ['08:30', '云冈石窟。建议第一批入园，游玩约3小时。'],
+          ['12:30', '回市区午饭，取行李。'],
+          ['13:30', '补古城内部：华严寺优先，其次善化寺/九龙壁。三选一到两项即可。'],
+          ['16:00', '开始返京。晚于18:00再走会更累，且进京段夜间压力大。']
+        ],
         choiceTitle: '土林和火山群怎么取舍',
         choices: [
           '火山群：放5月2日去程顺路看，适合自驾扫点，重点看狼窝山、金山、昊天山一带。它不是精致景区型体验，预期放在“地貌打卡”。',
@@ -547,8 +652,20 @@
         routeSave: '路线：收藏酒店、古城停车场、悬空寺停车场、云冈停车场、火山群、土林六个导航点。',
         legend: '5月3日悬空寺/恒山/土林'
       },
-      tower: {
+      v2: {
+        routeOutbound: '北京城区/北部出城 → G6京藏或G7京新 → 八达岭/延庆 → 张家口/宣化 → 天镇方向 → 云州火山群 → 大同古城。约360公里上下，正常5小时左右，五一按6小时预留。',
         routeDay3: '大同古城 → 浑源 → 悬空寺 → 北岳恒山轻量游 → 应县木塔 → 大同古城。当天往返约220-250公里，木塔替换土林。',
+        routeReturn: '大同古城 → 云冈石窟 → 古城补华严寺/善化寺/九龙壁 → 返京。建议15:30-16:30返程，避开夜间疲劳驾驶。',
+        day2Title: '5月2日：北京到大同 + 火山群 + 古城夜景',
+        day2Rows: [
+          ['06:30', '北京出发。油加满，ETC检查好，车上备水和干粮。'],
+          ['10:30', '张家口/宣化附近服务区短休，不要拖太久。'],
+          ['12:30', '到大同东/云州区方向，先吃午饭，别急着进古城。'],
+          ['14:00', '大同火山群国家地质公园。自驾看狼窝山/金山/昊天山一带，游玩约1.5-2小时。'],
+          ['16:30', '开车进大同古城/城墙边酒店，办理入住，把车停好。'],
+          ['18:30', '鼓楼、华严寺广场、九龙壁外观、古城墙夜景。第一天不建议再硬塞华严寺内部。']
+        ],
+        parking: '先问酒店能不能保留车位。若酒店车位满，用“天下大同”小程序看古城停车场实时车位，优先九龙壁、善化寺西侧、代王府西侧、城墙周边正规停车场。停好后当天尽量步行。',
         day3Title: '5月3日：悬空寺 + 恒山轻量游 + 应县木塔',
         day3Rows: [
           ['06:15', '大同古城出发去悬空寺，比原版再提前15分钟，五一不要踩点。'],
@@ -565,6 +682,14 @@
           '悬空寺严重排队时，现场二选一：保木塔就压缩恒山；保恒山就取消木塔。',
           '应县木塔下午入园时间以当天购票平台为准，出发前再看一次停止入园时间。'
         ],
+        day4Title: '5月4日：云冈石窟 + 古城补漏 + 返京',
+        day4Rows: [
+          ['07:30', '退房或寄存行李，开车去云冈石窟，古城到云冈约18-22公里。'],
+          ['08:30', '云冈石窟。建议第一批入园，游玩约3小时。'],
+          ['12:30', '回市区午饭，取行李。'],
+          ['13:30', '补古城内部：华严寺优先，其次善化寺/九龙壁。三选一到两项即可。'],
+          ['16:00', '开始返京。晚于18:00再走会更累，且进京段夜间压力大。']
+        ],
         choiceTitle: '木塔版取舍说明',
         choices: [
           '应县木塔：替换5月3日土林，优先级更偏历史古建，适合想看“真正代表性景点”的版本。',
@@ -573,6 +698,54 @@
         ],
         routeSave: '路线：收藏酒店、古城停车场、悬空寺停车场、应县木塔停车场、云冈停车场、火山群六个导航点。',
         legend: '5月3日悬空寺/恒山/应县木塔'
+      },
+      v3: {
+        routeOutbound: '北京城区/北部出城 → 张家口/宣化 → 天镇方向 → 云州火山群 → 吾悦广场/植物园附近住宿 → 古城夜游。城区景点顺序不改，但晚上建议打车去古城。',
+        routeDay3: '吾悦广场/植物园附近住宿 → 浑源 → 悬空寺 → 北岳恒山轻量游 → 应县木塔 → 回住宿。当天往返约240公里上下，木塔替换土林。',
+        routeReturn: '住宿退房 → 云冈石窟 → 古城补华严寺/善化寺/九龙壁 → 返京。住西南侧去云冈更顺，午后再进古城补漏。',
+        day2Title: '5月2日：北京到大同 + 火山群 + 入住吾悦广场 + 古城夜景',
+        day2Rows: [
+          ['06:30', '北京出发。五一尽量早走，车上备水和干粮。'],
+          ['10:30', '张家口/宣化附近服务区短休，不要拖太久。'],
+          ['12:30', '到大同东/云州区方向，先吃午饭。'],
+          ['14:00', '大同火山群国家地质公园。自驾扫狼窝山/金山/昊天山一带，游玩约1.5小时。'],
+          ['16:30', '开车到吾悦广场/植物园附近民宿入住，把车停好。'],
+          ['18:30', '打车去古城吃晚饭和夜游：鼓楼、华严寺广场、九龙壁外观、城墙夜景。']
+        ],
+        parking: 'v3 住在吾悦广场/植物园附近，优先把车停民宿。5月2日晚去古城建议打车；如果开车，只停一次，别在古城里反复挪车。',
+        day3Title: '5月3日：住宿出发 + 悬空寺 + 恒山轻量游 + 应县木塔',
+        day3Rows: [
+          ['06:15', '从吾悦广场/植物园附近住宿出发去悬空寺，五一不要踩点。'],
+          ['08:15', '悬空寺。优先完成登临/外观游览，排队过长就压缩恒山。'],
+          ['10:30', '北岳恒山轻量游。只做核心段或索道/摆渡车组合，不完整爬山。'],
+          ['12:30', '浑源或应县方向午饭，边吃边看应县木塔入园时间和路况。'],
+          ['14:00', '应县木塔。游玩约1-1.5小时，重点看木塔外观、辽代古建结构和周边院落。'],
+          ['15:45', '从应县返大同，五一按1.5-2小时预留。'],
+          ['18:00', '回住宿停车，晚饭优先凯鸽/三道菜这类稳妥炒菜。']
+        ],
+        risks: [
+          'v3 默认采用木塔版：土林取消，避免五一当天赶路。',
+          '恒山只能轻量游：如果想完整爬恒山，就不要加木塔。',
+          '悬空寺严重排队时，现场二选一：保木塔就压缩恒山；保恒山就取消木塔。',
+          '回程先回住宿停车再吃饭，别拖着疲劳状态继续找车位。'
+        ],
+        day4Title: '5月4日：住宿退房 + 云冈石窟 + 古城补漏 + 返京',
+        day4Rows: [
+          ['07:30', '退房，把行李放车上，从吾悦广场/植物园附近出发去云冈。'],
+          ['08:00', '到云冈石窟，建议第一批入园，游玩约3小时。'],
+          ['11:30', '离开云冈，开车进古城周边停车或直接打车/短停吃饭。'],
+          ['12:30', '古城午饭：喜晋道/豆面刘姥姥/东方削面，别吃太久。'],
+          ['13:30', '补城区内部：华严寺优先，其次善化寺/九龙壁。城区景点顺序不改。'],
+          ['16:00', '开始返京。晚于18:00再走会更累，且进京段夜间压力大。']
+        ],
+        choiceTitle: 'v3 住宿版取舍说明',
+        choices: [
+          '住宿在吾悦广场/植物园附近：去云冈更顺，停车比古城核心舒服，但古城夜游建议打车。',
+          '5月3日采用木塔版：悬空寺优先，恒山轻量游，应县木塔下午看，土林取消。',
+          '餐厅按“少排队、顺路、能停车”优先，不为网红店牺牲行程节奏。'
+        ],
+        routeSave: '路线：收藏民宿完整地址、古城停车场、悬空寺停车场、应县木塔停车场、云冈停车场、5月2/3/4餐厅备选。',
+        legend: '5月3日住宿/悬空寺/恒山/应县木塔'
       }
     };
 
@@ -586,40 +759,54 @@
 
     function applyVersion(version) {
       const data = copy[version];
-      document.querySelectorAll('[data-version]').forEach(button => {
-        button.classList.toggle('active', button.dataset.version === version);
-      });
+      document.querySelector('#version-select').value = version;
+      document.querySelector('#route-outbound td').textContent = data.routeOutbound;
       document.querySelector('#route-day3 td').textContent = data.routeDay3;
+      document.querySelector('#route-return td').textContent = data.routeReturn;
+      document.querySelector('#day2-title').textContent = data.day2Title;
+      document.querySelector('#day2-table').innerHTML = renderRows(data.day2Rows);
+      document.querySelector('#parking-note').textContent = data.parking;
       document.querySelector('#day3-title').textContent = data.day3Title;
       document.querySelector('#day3-table').innerHTML = renderRows(data.day3Rows);
       document.querySelector('#day3-risk').innerHTML = renderList(data.risks);
+      document.querySelector('#day4-title').textContent = data.day4Title;
+      document.querySelector('#day4-table').innerHTML = renderRows(data.day4Rows);
       document.querySelector('#choice-title').textContent = data.choiceTitle;
       document.querySelector('#choice-list').innerHTML = renderList(data.choices);
       document.querySelector('#route-save-item').textContent = data.routeSave;
       document.querySelector('#legend-day3').textContent = data.legend;
 
-      if (version === 'tower') {
-        if (map.hasLayer(soilLine)) map.removeLayer(soilLine);
-        if (!map.hasLayer(towerLine)) towerLine.addTo(map);
+      [outboundLine, outboundV3Line, soilLine, towerLine, towerV3Line, returnLine, returnV3Line].forEach(line => {
+        if (map.hasLayer(line)) map.removeLayer(line);
+      });
+      if (version === 'v1') {
+        outboundLine.addTo(map);
+        soilLine.addTo(map);
+        returnLine.addTo(map);
+      } else if (version === 'v2') {
+        outboundLine.addTo(map);
+        towerLine.addTo(map);
+        returnLine.addTo(map);
       } else {
-        if (map.hasLayer(towerLine)) map.removeLayer(towerLine);
-        if (!map.hasLayer(soilLine)) soilLine.addTo(map);
+        outboundV3Line.addTo(map);
+        towerV3Line.addTo(map);
+        returnV3Line.addTo(map);
       }
 
       markerRefs.forEach(({ marker, point }) => {
-        const shouldShow = !point.version || point.version === version;
+        const shouldShow = point.versions ? point.versions.includes(version) : (!point.version || point.version === version);
         if (shouldShow && !map.hasLayer(marker)) marker.addTo(map);
         if (!shouldShow && map.hasLayer(marker)) map.removeLayer(marker);
       });
       updateLabels();
     }
 
-    document.querySelectorAll('[data-version]').forEach(button => {
-      button.addEventListener('click', () => applyVersion(button.dataset.version));
+    document.querySelector('#version-select').addEventListener('change', event => {
+      applyVersion(event.target.value);
     });
 
     map.fitBounds(L.latLngBounds(points.map(p => p.pos)).pad(0.08));
-    applyVersion('soil');
+    applyVersion('v3');
     setTimeout(updateLabels, 0);
   </script>
 </body>
