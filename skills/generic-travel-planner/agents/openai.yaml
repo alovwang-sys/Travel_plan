@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generic Travel Planner"
+  short_description: "Reusable city trip maps and route plans"
+  default_prompt: "Use $generic-travel-planner to plan a multi-day city trip with route versions, lodging-aware timing, restaurants, and a shareable map."
